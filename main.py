@@ -14,7 +14,10 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 # 🔹 Google Gemini AI konfiguratsiyasi
 genai.configure(api_key=GEMINI_API_KEY)
-model = genai.GenerativeModel("gemini-1.5-flash")
+
+# 🔹 Mavjud va ishlaydigan modelni ishlatish
+# ListModels orqali aniqlangan model: gemini-1.5
+model = genai.GenerativeModel("gemini-1.5")
 
 # 🔹 /start komandasi
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -40,7 +43,8 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
     try:
-        response = model.generate_content(prompt)
+        # generate_text metodidan foydalanamiz, generate_content ba'zan eski versiyalarda ishlamaydi
+        response = model.generate_text(prompt)
         ai_text = response.text if hasattr(response, "text") else "❌ Javob olinmadi."
         await update.message.reply_text(ai_text)
     except Exception as e:
