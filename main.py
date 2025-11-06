@@ -1,5 +1,5 @@
-import logging
 import os
+import logging
 from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
 import google.generativeai as genai
@@ -8,15 +8,14 @@ import google.generativeai as genai
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# 🔹 Environment variables orqali token va API kalit
+# 🔹 TOKEN VA API KALITLAR
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
-# 🔹 Google Gemini AI konfiguratsiyasi
+# 🔹 GOOGLE GEMINI AI KONFIGURATSIYA
 genai.configure(api_key=GEMINI_API_KEY)
 
-# 🔹 Mavjud va ishlaydigan modelni ishlatish
-# ListModels orqali aniqlangan model: gemini-1.5
+# 🔹 Ishlaydigan modelni tanlash (ListModels orqali aniqlang)
 model = genai.GenerativeModel("gemini-1.5")
 
 # 🔹 /start komandasi
@@ -24,11 +23,11 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message:
         await update.message.reply_text(
             "👋 Salom! Men Gemini AI botman.\n"
-            "Menga mavzu yuboring va men sizga slayd/referat tayyorlab beraman.\n\n"
+            "Menga mavzu yuboring va men sizga slayd yoki referat tayyorlab beraman.\n\n"
             "Masalan: 'O'zbekistonning iqlimi haqida referat'."
         )
 
-# 🔹 Asosiy AI javobi
+# 🔹 AI javobini yaratish
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not update.message or not update.message.text:
         return
@@ -38,12 +37,12 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     prompt = (
         f"Sizga mavzu berildi: {topic}\n"
-        "Iltimos, bu mavzuda qisqa va to‘liq slayd/referat tayyorlang. "
+        "Iltimos, bu mavzuda qisqa va to‘liq slayd yoki referat tayyorlang. "
         "Har bir bo‘limni raqam bilan ajrating va soddalashtirilgan tarzda yozing."
     )
 
     try:
-        # generate_text metodidan foydalanamiz, generate_content ba'zan eski versiyalarda ishlamaydi
+        # generate_text metodidan foydalanamiz (barqaror ishlaydi)
         response = model.generate_text(prompt)
         ai_text = response.text if hasattr(response, "text") else "❌ Javob olinmadi."
         await update.message.reply_text(ai_text)
@@ -51,7 +50,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         logger.error(f"Xato: {e}")
         await update.message.reply_text("❌ Xatolik yuz berdi. Keyinroq urinib ko‘ring.")
 
-# 🔹 Asosiy ishga tushirish
+# 🔹 Botni ishga tushirish
 def main():
     application = Application.builder().token(TELEGRAM_BOT_TOKEN).build()
 
