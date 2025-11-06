@@ -4,30 +4,28 @@ from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
 import google.generativeai as genai
 
-# 🔹 LOG SOZLAMALARI
+# 🔹 Log sozlamalari
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# 🔹 TOKEN VA API KALITLAR
+# 🔹 Token va API kalitlari
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
-# 🔹 GOOGLE GEMINI AI KONFIGURATSIYA
+# 🔹 Gemini AI konfiguratsiyasi
 genai.configure(api_key=GEMINI_API_KEY)
-
-# 🔹 Ishlaydigan modelni tanlash (ListModels orqali aniqlang)
-model = genai.GenerativeModel("gemini-1.5")
+model = genai.GenerativeModel("gemini-1.5")  # Ishlaydigan model
 
 # 🔹 /start komandasi
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message:
         await update.message.reply_text(
             "👋 Salom! Men Gemini AI botman.\n"
-            "Menga mavzu yuboring va men sizga slayd yoki referat tayyorlab beraman.\n\n"
+            "Mavzu yuboring, men sizga slayd yoki referat tayyorlab beraman.\n"
             "Masalan: 'O'zbekistonning iqlimi haqida referat'."
         )
 
-# 🔹 AI javobini yaratish
+# 🔹 AI javobini olish
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not update.message or not update.message.text:
         return
@@ -42,7 +40,6 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
     try:
-        # generate_text metodidan foydalanamiz (barqaror ishlaydi)
         response = model.generate_text(prompt)
         ai_text = response.text if hasattr(response, "text") else "❌ Javob olinmadi."
         await update.message.reply_text(ai_text)
@@ -58,7 +55,7 @@ def main():
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
     logger.info("✅ Bot ishga tushdi... (Gemini AI bilan)")
-    application.run_polling()
+    application.run_polling()  # Bu yerda Updater kerak emas
 
 if __name__ == "__main__":
     main()
