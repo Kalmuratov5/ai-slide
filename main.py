@@ -18,18 +18,14 @@ model = genai.GenerativeModel("gemini-1.5")  # Ishlaydigan model
 
 # 🔹 /start komandasi
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if update.message:
-        await update.message.reply_text(
-            "👋 Salom! Men Gemini AI botman.\n"
-            "Mavzu yuboring, men sizga slayd yoki referat tayyorlab beraman.\n"
-            "Masalan: 'O'zbekistonning iqlimi haqida referat'."
-        )
+    await update.message.reply_text(
+        "👋 Salom! Men Gemini AI botman.\n"
+        "Mavzu yuboring, men sizga slayd yoki referat tayyorlab beraman.\n"
+        "Masalan: 'O'zbekistonning iqlimi haqida referat'."
+    )
 
 # 🔹 AI javobini olish
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if not update.message or not update.message.text:
-        return
-
     topic = update.message.text
     logger.info(f"Foydalanuvchi mavzuni yubordi: {topic}")
 
@@ -50,12 +46,12 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # 🔹 Botni ishga tushirish
 def main():
     application = Application.builder().token(TELEGRAM_BOT_TOKEN).build()
-
+    
     application.add_handler(CommandHandler("start", start))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
     logger.info("✅ Bot ishga tushdi... (Gemini AI bilan)")
-    application.run_polling()  # Bu yerda Updater kerak emas
+    application.run_polling()  # Updater ishlatilmaydi
 
 if __name__ == "__main__":
     main()
