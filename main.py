@@ -10,9 +10,13 @@ import google.generativeai as genai
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# 🔹 TOKENLAR (shu yerda yozilgan)
-TELEGRAM_BOT_TOKEN = "7079998022:AAEcMbdT-1wIpiqQqqmVx7B_cOy07vQ7vno"
-GEMINI_API_KEY = "AIzaSyBJd1xvPOnLKsbiRuy88rJbFPG5UO-2hW0"
+# 🔹 TOKENLAR (Environment Variables orqali)
+TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+
+if not TELEGRAM_BOT_TOKEN or not GEMINI_API_KEY:
+    logger.error("❌ TELEGRAM_BOT_TOKEN yoki GEMINI_API_KEY o'rnatilmagan!")
+    exit(1)
 
 # 🔹 GOOGLE GEMINI ULANISH
 genai.configure(api_key=GEMINI_API_KEY)
